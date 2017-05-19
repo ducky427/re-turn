@@ -2,8 +2,6 @@
   (:require [goog.object :as gobj]
             [cljsjs.redux]))
 
-(def ^:private !handlers (atom {}))
-
 (defn logger
   [store]
   (fn [next]
@@ -14,16 +12,19 @@
         result))))
 
 (defprotocol Store
+  (add-reducer [this type f])
   (dispatch [this type] [this type data])
   (subscribe [this f])
   (get-state [this]))
 
-(defrecord ReduxStore [store]
+(defrecord ReduxStore [store !handlers]
   Store
+  (add-reducer [this type f]
+    (swap! !handlers assoc type f))
   (dispatch [this type]
-    (.dispatch store #js {"type" type}))
+    (.dispatch store #js {"type" type "handlers" @!handlers}))
   (dispatch [this type data]
-    (.dispatch store #js {"type" type "data" data}))
+    (.dispatch store #js {"type" type "data" data "handlers" @!handlers}))
   (subscribe [this f]
     (.subscribe store f))
   (get-state [this]
@@ -33,7 +34,7 @@
   [initial]
   (let [new-reducer (fn [store y]
                       (let [type      (gobj/get y "type")
-                            handlers  @!handlers]
+                            handlers  (gobj/get y "handlers")]
                         (if (contains? handlers type)
                           (let [f       (type handlers)
                                 res     (f store type (gobj/get y "data"))]
@@ -47,9 +48,10 @@
                             store))))]
     (ReduxStore. (js/Redux.createStore new-reducer
                                        initial
-                                       (js/Redux.applyMiddleware logger)))))
+                                       (js/Redux.applyMiddleware logger))
+                 (atom {}))))
 
 (defn defreducer
-  [type f]
-  (swap! !handlers assoc type f)
+  [store type f]
+  (add-reducer store type f)
   f)

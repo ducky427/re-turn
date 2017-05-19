@@ -7,11 +7,13 @@
 (defonce store (r/create-store 0))
 
 (r/defreducer
+  store
   :counter/increment
   (fn [db]
     (inc db)))
 
 (r/defreducer
+  store
   :counter/decrement
   (fn [db]
     (dec db)))
