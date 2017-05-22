@@ -1,7 +1,8 @@
 (ns re-turn.vanilla-counter
   (:require [re-turn.helper :as r]))
 
-(defn- by-id [id]
+(defn- by-id
+  [id]
   (.getElementById js/document (name id)))
 
 (defonce store (r/create-store 0))

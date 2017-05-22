@@ -6,9 +6,12 @@
 
   :min-lein-version "2.7.1"
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
+  :dependencies [[org.clojure/clojure "1.9.0-alpha16"]
                  [org.clojure/clojurescript "1.9.542"]
-                 [cljsjs/redux "3.6.0-0"]]
+                 [sablono "0.8.1-SNAPSHOT"]
+                 [cljsjs/redux "3.6.0-0"]
+                 [cljsjs/react-dom "15.5.4-0"]
+                 [rum "0.10.8"]]
 
   :plugins [[lein-figwheel "0.5.10"]
             [lein-cljsbuild "1.1.6" :exclusions [[org.clojure/clojure]]]]

@@ -22,34 +22,42 @@
   (add-reducer [this type f]
     (swap! !handlers assoc type f))
   (dispatch [this type]
-    (.dispatch store #js {"type" type "handlers" @!handlers}))
+    (dispatch this type nil))
   (dispatch [this type data]
-    (.dispatch store #js {"type" type "data" data "handlers" @!handlers}))
+    (let [fs  @!handlers
+          f   (if (contains? fs type)
+                (type fs)
+                (do
+                  (js/console.warn "Unable to find handler for action: " type)
+                  identity))]
+      (.dispatch store #js {"type" type "data" data "handler" f})))
   (subscribe [this f]
     (.subscribe store f))
   (get-state [this]
     (.getState store)))
 
+(defn- new-reducer
+  [store y]
+  (let [type   (gobj/get y "type")
+        f      (or (gobj/get y "handler")
+                   identity)
+        res    (f store type (gobj/get y "data"))]
+    (if res
+      res
+      (do
+        (js/console.warn "Got nil result for action: " y)
+        store))))
+
 (defn create-store
-  [initial]
-  (let [new-reducer (fn [store y]
-                      (let [type      (gobj/get y "type")
-                            handlers  (gobj/get y "handlers")]
-                        (if (contains? handlers type)
-                          (let [f       (type handlers)
-                                res     (f store type (gobj/get y "data"))]
-                            (if res
-                              res
-                              (do
-                                (js/console.warn "Got nil result for action: " y)
-                                store)))
-                          (do
-                            (js/console.warn "Unable to find handler for action: " y)
-                            store))))]
-    (ReduxStore. (js/Redux.createStore new-reducer
-                                       initial
-                                       (js/Redux.applyMiddleware logger))
-                 (atom {}))))
+  ([initial]
+   (ReduxStore. (js/Redux.createStore new-reducer
+                                     initial)
+               (atom {})))
+  ([initial middlewares]
+   (ReduxStore. (js/Redux.createStore new-reducer
+                                     initial
+                                     (apply js/Redux.applyMiddleware middlewares))
+               (atom {}))))
 
 (defn defreducer
   [store type f]
