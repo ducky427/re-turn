@@ -51,15 +51,14 @@
 (defn create-store
   ([initial]
    (ReduxStore. (js/Redux.createStore new-reducer
-                                     initial)
-               (atom {})))
+                                      initial)
+                (atom {})))
   ([initial middlewares]
    (ReduxStore. (js/Redux.createStore new-reducer
-                                     initial
-                                     (apply js/Redux.applyMiddleware middlewares))
-               (atom {}))))
+                                      initial
+                                      (apply js/Redux.applyMiddleware middlewares))
+                (atom {}))))
 
 (defn defreducer
   [store type f]
-  (add-reducer store type f)
-  f)
+  (add-reducer store type f))
