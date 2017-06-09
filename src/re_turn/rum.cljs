@@ -14,7 +14,7 @@
   store
   :counter/decrement
   (fn [db]
-    (dec db)))
+    (max 0 (dec db))))
 
 (rum/defc new-component
   [num]

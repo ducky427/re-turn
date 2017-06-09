@@ -7,10 +7,10 @@
   :min-lein-version "2.7.1"
 
   :dependencies [[org.clojure/clojure "1.9.0-alpha16"]
-                 [org.clojure/clojurescript "1.9.542"]
+                 [org.clojure/clojurescript "1.9.562"]
                  [sablono "0.8.1-SNAPSHOT"]
                  [cljsjs/redux "3.6.0-0"]
-                 [cljsjs/react-dom "15.5.4-0"]
+                 [cljsjs/react-dom "15.5.4-1"]
                  [rum "0.10.8"]]
 
   :plugins [[lein-figwheel "0.5.10"]
@@ -95,7 +95,7 @@
   ;; https://github.com/bhauman/lein-figwheel/wiki/Using-the-Figwheel-REPL-within-NRepl
   :profiles {:dev {:dependencies [[binaryage/devtools "0.9.4"]
                                   [figwheel-sidecar "0.5.10"]
-                                  [com.cemerick/piggieback "0.2.1"]]
+                                  [com.cemerick/piggieback "0.2.2"]]
                    ;; need to add dev source path here to get user.clj loaded
                    :source-paths ["src" "dev"]
                    ;; for CIDER
